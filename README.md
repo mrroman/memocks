@@ -1,4 +1,4 @@
-# memocks
+# memocks [![Build Status](https://travis-ci.org/siilisolutions-pl/memocks.svg?branch=master)](https://travis-ci.org/siilisolutions-pl/memocks)
 
 It's simple mocking library. You can create mock function
 that records all arguments and check if it was invoked.
