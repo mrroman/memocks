@@ -1,4 +1,4 @@
-# memocks [![Build Status](https://travis-ci.org/siilisolutions-pl/memocks.svg?branch=master)](https://travis-ci.org/siilisolutions-pl/memocks) [![Clojars Project](https://img.shields.io/clojars/v/siili/memocks.svg)](https://clojars.org/siili/memocks)
+# memocks [![Build Status](https://travis-ci.org/siilisolutions-pl/memocks.svg?branch=master)](https://travis-ci.org/siilisolutions-pl/memocks) [![Clojars Project](https://img.shields.io/clojars/v/com.siili/memocks.svg)](https://clojars.org/com.siili/memocks)
 
 It's simple mocking library. You can create mock function
 that records all arguments and check if it was invoked.
@@ -8,7 +8,7 @@ that records all arguments and check if it was invoked.
 Import memocks:
 
 ```clj
-(require '[siili.memocks :as memocks])
+(require '[com.siili.memocks :as memocks])
 ```
 
 ### Simple mock

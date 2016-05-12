@@ -1,6 +1,6 @@
-(ns siili.memocks-test
+(ns com.siili.memocks-test
   (:require [clojure.test :refer :all]
-            [siili.memocks :refer :all]))
+            [com.siili.memocks :refer :all]))
 
 (deftest mocking-test
   (testing "mock that returns nil"

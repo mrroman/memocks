@@ -1,4 +1,4 @@
-(defproject siili/memocks "0.1.0"
+(defproject com.siili/memocks "0.1.0"
   :description "Simple mocking library to use in your clojure tests."
   :url "https://github.com/siilisolutions-pl/memocks"
   :license {:name "Eclipse Public License"

@@ -1,4 +1,4 @@
-(ns siili.memocks
+(ns com.siili.memocks
   (:require [clojure.test :as t]))
 
 (defn mock
@@ -52,7 +52,7 @@
   [mocks & body]
   (assert (even? (count mocks)) "bindings should be vector with even elements")
   (let [pairs (partition 2 mocks)
-        bindings (reduce (fn [sum [s v]] (conj sum s `(siili.memocks/mock ~v))) [] pairs)]
+        bindings (reduce (fn [sum [s v]] (conj sum s `(com.siili.memocks/mock ~v))) [] pairs)]
     `(with-redefs ~bindings
        ~@body)))
 
