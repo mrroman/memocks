@@ -55,6 +55,12 @@ You can check if function was invoked and if it was invoked with given arguments
 
 > `(memocks/invoked-with?)` uses regular `=` operator.
 
+(memocks/invoked-as? (m :info "Results:" 3.14159))
+
+> This looks a bit like invoked-with? but has different semantics.
+> It will be treated as a function invocation to linters so they
+> can check e.g. if function arity is valid.
+
 ### Mock returning value
 
 You can create mock that returns value:
