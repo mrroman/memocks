@@ -39,6 +39,11 @@
   [m & expected-args]
   (some #(= expected-args %) (all-args m)))
 
+(defmacro invoked-as?
+  "Checks if given mock invocations were present."
+  [[m & args]]
+  `(invoked-with? ~m ~@args))
+
 (defmacro with-mocks
   "This macro is a syntactic sugar for mocking specified symbols.
 

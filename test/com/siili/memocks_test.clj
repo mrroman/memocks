@@ -32,6 +32,13 @@
       (is (invoked-with? m 1 2 3))
       (is (invoked-with? m 3 4 5))
       (is (not (invoked-with? m 0 0 0)))))
+  (testing "mock incokation was present"
+    (let [m (mock)]
+      (m 3 4 5)
+      (m 1 2 3)
+      (is (invoked-as? (m 1 2 3)))
+      (is (invoked-as? (m 3 4 5)))
+      (is (not (invoked-as? (m 0 0 0))))))
   (testing "mock with custom function taking vector of all passed args"
     (let [m (mock (fn [args]
                     (count args)))]
