@@ -1,7 +1,10 @@
-# memocks [![Build Status](https://travis-ci.org/siilisolutions-pl/memocks.svg?branch=master)](https://travis-ci.org/siilisolutions-pl/memocks) [![Clojars Project](https://img.shields.io/clojars/v/com.siili/memocks.svg)](https://clojars.org/com.siili/memocks)
+# memocks 
 
-It's simple mocking library. You can create mock function
-that records all arguments and check if it was invoked.
+It's simple mocking library. You can create mock function that records all arguments and check if it was invoked.
+
+## Install
+
+I don't support clojars.org currently. You have to use git based dependency.
 
 ## Usage
 
