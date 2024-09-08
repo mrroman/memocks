@@ -1,6 +1,6 @@
 # memocks 
 
-It's simple mocking library. You can create mock function that records all arguments and check if it was invoked.
+It's simple mocking library. You can create a mock function that records all calls and check if it was invoked.
 
 ## Install
 
@@ -24,7 +24,7 @@ Create new mock function:
 
 ### Recorded arguments
 
-You can pass it as any other function and check all recorded arguments
+You can call it as any other function and check all recorded calls.
 
 ```clj
 
@@ -36,7 +36,7 @@ You can pass it as any other function and check all recorded arguments
 => [(:debug "Start process...") (:info "Results:") (:debug "Stop process...")]
 ```
 
-You can check if function was invoked and if it was invoked with given arguments:
+Checking if the call happened can be cumbersome, so I've implemented a couple of predicates:
 
 ```clj
 
@@ -51,19 +51,22 @@ You can check if function was invoked and if it was invoked with given arguments
 
 (memocks/invoked-with? m :info "Results:" 3.14159)
 => false
-```
 
-> `(memocks/invoked-with?)` uses regular `=` operator.
+(memocks/invoked-as? (m :info "Results:"))
+=> true
 
 (memocks/invoked-as? (m :info "Results:" 3.14159))
+=> false
+```
 
-> This looks a bit like invoked-with? but has different semantics.
-> It will be treated as a function invocation to linters so they
-> can check e.g. if function arity is valid.
+> `invoked-as?` looks a bit like `invoked-with?` but has different semantics.
+> It will be treated as a function invocation to linters so they can check e.g. if function arity is valid.
 
-### Mock returning value
+> `(memocks/invoked-with?)` and `(memocks/invoked-as?)` use regular `=` operator to compare arguments.
 
-You can create mock that returns value:
+### Mock returning a value
+
+You can create a mock that returns a value:
 
 ```clj
 
@@ -75,12 +78,12 @@ You can create mock that returns value:
 
 ### Mock with a result computing function
 
-You can also create mock with a custom function that calculates result.
-The function takes as an argument a list with all provided args.
+You can also create a mock with a custom function that calculates the result.
+The function takes as an argument a list with all recorded calls.
 
 ```clj
 
-(def stub (memocks/mock (fn [x] (last x))))
+(def stub (memocks/mock (fn [calls] (last calls))))
 
 (stub 1)
 => (1)
@@ -92,12 +95,12 @@ The function takes as an argument a list with all provided args.
 => (3)
 ```
 
-In this example, mock will return a list with args from the last call.
+In this example, mock will return the last call (a list of arguments).
 
 ### Mocking symbols
 
-Memocks provides a convienient macro that allows you to mock functions easily.
-Lets mock function http/get.
+Memocks provides a convenient macro that allows you to mock functions easily.
+Let's mock function http/get.
 
 ```clj
 (with-mocks [http/get {:body "OK" :status 200}
@@ -112,5 +115,4 @@ Memocks uses `with-redefs` macro provided by Clojure.
 
 Copyright © 2016 Konrad Mrożek
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
