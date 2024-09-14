@@ -25,4 +25,4 @@ jobs:
     - name: Install dependencies
       run: clojure -A:test -P
     - name: Run tests
-      run: clojure -X:test
+      run: clojure -T:build ci
