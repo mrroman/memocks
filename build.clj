@@ -5,7 +5,8 @@
    [clojure.tools.build.api :as b]))
 
 (def lib 'org.clojars.mrroman/memocks)
-(def version (format "0.1.%s" (b/git-count-revs nil)))
+(def git-tag (b/git-process {:git-args "describe --tags"}))
+(def version git-tag)
 (def class-dir "target/classes")
 
 (defn test "Run all the tests."
@@ -24,11 +25,15 @@
   (assoc opts
          :lib lib :version version
          :jar-file (format "target/%s-%s.jar" lib version)
-         :scm {:tag (str "v" version)}
+         :scm {:tag git-tag}
          :basis (b/create-basis {})
          :class-dir class-dir
          :target "target"
-         :src-dirs ["src"]))
+         :src-dirs ["src"]
+         :pom-data [[:licenses
+                     [:license
+                      [:name "Eclipse Public License 1.0"]
+                      [:url "https://opensource.org/license/epl-1-0/"]]]]))
 
 (defn ci "Run the CI pipeline of tests (and build the JAR)."
   [opts]
@@ -51,6 +56,8 @@
 
 (defn deploy "Deploy the JAR to Clojars."
   [opts]
+  (assert (re-matches #"\d+\.\d+.\d+" version)
+          (str "Version " version " should match number.number.number pattern"))
   (let [{:keys [jar-file] :as opts} (jar-opts opts)]
     (aether/deploy :coordinates [lib version]
                    :jar-file (b/resolve-path jar-file)
