@@ -2,10 +2,10 @@
   (:require [clojure.test :as t]))
 
 (defn mock
-  "Creates mock function that accepts variable number of arguments
-  and will return nil or given value and record all arguments passed
-  to the function. If you specify function as a value, it will be
-  executed with vector of all invokations as an argument."
+  "Creates a mock function that accepts variable number of arguments
+   and will return nil or given value and record all arguments passed
+   to the function. If you specify function as a value, it will be
+   executed with vector of all calls as an argument."
   ([]
    (mock nil))
   ([f-or-res]
@@ -15,12 +15,12 @@
                   (f (swap! a conj args))) {:args a}))))
 
 (defn all-args
-  "Returns all recorded arguments."
+  "Returns all recorded calls."
   [m]
   @(:args (meta m)))
 
 (defn last-args
-  "Returns last recorder arguments."
+  "Returns the last recorded call's arguments."
   [m]
   (last (all-args m)))
 
