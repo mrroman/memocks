@@ -1,6 +1,9 @@
 (ns com.siili.memocks-test
-  (:require [clojure.test :refer [deftest is testing]]
-            [com.siili.memocks :as memocks]))
+  (:require
+   [clojure.test :refer [deftest is testing]]
+   [com.siili.memocks :as memocks]
+   [com.siili.memocks-test :as test-alias]
+   [malli.core :as m]))
 
 (deftest mocking-test
   (testing "mock that returns nil"
@@ -53,6 +56,10 @@
 (defn test-func []
   :original)
 
+(m/=> test-func2 [:=> [:cat :int] :int])
+(defn test-func2 [x]
+  (inc x))
+
 (deftest with-mocks-test
   (testing "mocking symbols"
     (memocks/with-mocks [test-func :mock]
@@ -60,4 +67,16 @@
   (testing "mocks only inside block"
     (memocks/with-mocks [test-func :mock]
       (is (= :mock (test-func))))
-    (is (= :original (test-func)))))
+    (is (= :original (test-func))))
+  (testing "use malli schema for mocked function"
+    (memocks/with-mocks [test-func2 1]
+      (is (= 1 (test-func2 1)))
+      (testing "invalid input"
+        (is (thrown? Exception (test-func2 nil)))))
+    (memocks/with-mocks [test-alias/test-func2 1]
+      (is (= 1 (test-alias/test-func2 1)))
+      (testing "invalid input"
+        (is (thrown? Exception (test-alias/test-func2 nil)))))
+    (memocks/with-mocks [test-func2 nil]
+      (testing "invalid output"
+        (is (thrown? Exception (test-func2 1)))))))

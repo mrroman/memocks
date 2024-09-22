@@ -1,5 +1,6 @@
 (ns com.siili.memocks
-  (:require [clojure.test :as t]))
+  (:require
+   [clojure.test :as t]))
 
 (defn mock
   "Creates a mock function that accepts variable number of arguments
@@ -44,6 +45,37 @@
   [[m & args]]
   `(invoked-with? ~m ~@args))
 
+(defn- malli-instrument [sym f]
+  (try
+    (require 'malli.core)
+    (let [function-schemas (find-var 'malli.core/function-schemas)
+          -instrument (find-var 'malli.core/-instrument)]
+      (if-let [schema (get-in (function-schemas) [(symbol (namespace sym))
+                                                  (symbol (name sym))])]
+        (-instrument schema f)
+        f))
+    (catch java.io.FileNotFoundException _
+      f)))
+
+(defn fn-mock
+  "Creates a mock of a function specified by symbol. It uses `mock` function
+   to generate a mock. It resolves aliases for namespaces according to current namespace."
+  [fn-symbol f-or-res]
+  (->> (mock f-or-res)
+       (malli-instrument fn-symbol)))
+
+(defn- resolve-ns-alias [ns-sym]
+  (or (find-ns ns-sym)
+      (.lookupAlias *ns* ns-sym)))
+
+(defn- resolve-symbol [fn-sym]
+  (let [ns-sym (ns-name (or (some->> fn-sym
+                                     namespace
+                                     symbol
+                                     resolve-ns-alias)
+                            *ns*))]
+    (symbol (name ns-sym) (name fn-sym))))
+
 (defmacro with-mocks
   "This macro is a syntactic sugar for mocking specified symbols.
 
@@ -52,12 +84,16 @@
 
   will be replaced with
 
-  (with-redefs [somens/somefn (siili.memocks/mock x)]
+  (with-redefs [somens/somefn (siili.memocks/fn-mock 'somens/fn-mock x)]
     (println (somens/somefn 10))) "
   [mocks & body]
   (assert (even? (count mocks)) "bindings should be vector with even elements")
   (let [pairs (partition 2 mocks)
-        bindings (reduce (fn [sum [s v]] (conj sum s `(com.siili.memocks/mock ~v))) [] pairs)]
+        bindings (reduce (fn [sum [fn-sym v]]
+                           (conj sum fn-sym
+                                 (list `fn-mock (list `quote (resolve-symbol fn-sym)) v)))
+                         []
+                         pairs)]
     `(with-redefs ~bindings
        ~@body)))
 
