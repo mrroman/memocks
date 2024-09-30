@@ -124,6 +124,38 @@ Let's mock function http/get.
 
 Memocks uses `with-redefs` macro provided by Clojure.
 
+### Malli support
+
+Memocks supports Malli function schemas. You can create a mock function instrumented
+with malli based on schema of a function. E.g.
+
+```clj
+(require '[malli.core :as m])
+
+(m/=> my-inc [:=> [:cat :int] :int])
+(defn my-inc [x]
+  (inc x))
+
+;; You have to provide a symbol of function 
+;; or with or without namespace (aliases are supported).
+(def my-inc-mock (mock-fn 'my-inc 1))
+
+(my-inc-mock 0)
+;=> 1
+
+(my-inc-mock "aa")
+;=> An exception ::invalid-input
+
+(def my-inc-mock2 (mock-fn 'my-inc nil))
+(my-inc-mock2 1)
+;=> An exception ::invalid-output
+```
+
+If you use `with-mocks` macro, it will our of the box.
+
+> If you use :malli/schema metadata to define schema, you have to use dev/start!
+> to enable mock instrumentation.
+
 ## License
 
 Copyright © 2016 Konrad Mrożek
