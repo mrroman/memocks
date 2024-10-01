@@ -11,13 +11,16 @@
 
 (defn test "Run all the tests."
   [opts]
-  (let [basis    (b/create-basis {:aliases [:test]})
-        cmds     (b/java-command
-                  {:basis      basis
-                   :main      'clojure.main
-                   :main-args ["-m" "cognitect.test-runner"]})
-        {:keys [exit]} (b/process cmds)]
-    (when-not (zero? exit) (throw (ex-info "Tests failed" {}))))
+  (doseq [variant [[] [:malli-10] [:malli-12] [:malli-14] [:malli-16]]]
+    (println)
+    (println "Testing variant..." variant)
+    (let [basis    (b/create-basis {:aliases (into [:test] variant)})
+          cmds     (b/java-command
+                    {:basis      basis
+                     :main      'clojure.main
+                     :main-args ["-m" "cognitect.test-runner"]})
+          {:keys [exit]} (b/process cmds)]
+      (when-not (zero? exit) (throw (ex-info "Tests failed" {})))))
   opts)
 
 (defn- jar-opts

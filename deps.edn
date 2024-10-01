@@ -5,6 +5,10 @@
                   :extra-deps {io.github.cognitect-labs/test-runner
                                {:git/tag "v0.5.1" :git/sha "dfb30dd"}
                                metosin/malli {:mvn/version "0.8.9"}}}
+           :malli-10 {:extra-deps {metosin/malli {:mvn/version "0.10.4"}}}
+           :malli-12 {:extra-deps {metosin/malli {:mvn/version "0.12.0"}}}
+           :malli-14 {:extra-deps {metosin/malli {:mvn/version "0.14.0"}}}
+           :malli-16 {:extra-deps {metosin/malli {:mvn/version "0.16.3"}}}
            :build {:deps {io.github.clojure/tools.build {:git/tag "v0.10.5" :git/sha "2a21b7a"}
                           clj-commons/pomegranate {:git/url "https://github.com/clj-commons/pomegranate.git"
                                                    :git/sha "4db42b2091f363bff48cbb80bc5230c3afa598d9"}}
