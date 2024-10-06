@@ -1,5 +1,6 @@
 (ns com.siili.memocks
   (:require
+   [clojure.spec.alpha :as s]
    [clojure.test :as t]))
 
 (defn mock
@@ -57,12 +58,26 @@
     (catch java.io.FileNotFoundException _
       f)))
 
+(defn- clojure-spec-instrument [sym f]
+  (if-let [s (s/get-spec sym)]
+    (fn [& args]
+      (when (= ::s/invalid (s/conform (:args s) args))
+        (throw (ex-info (str "Function " sym " arguments don't conform spec")
+                        {:explain (s/explain-str (:args s) args)})))
+      (let [res (apply f args)]
+        (when (= ::s/invalid (s/conform (:ret s) res))
+          (throw (ex-info  (str "Function " sym " returned value not conforming ret spec")
+                           {:explain (s/explain-str (:ret s) res)})))
+        res))
+    f))
+
 (defn fn-mock
   "Creates a mock of a function specified by symbol. It uses `mock` function
    to generate a mock. It resolves aliases for namespaces according to current namespace."
   [fn-symbol f-or-res]
   (->> (mock f-or-res)
-       (malli-instrument fn-symbol)))
+       (malli-instrument fn-symbol)
+       (clojure-spec-instrument fn-symbol)))
 
 (defn- resolve-ns-alias [ns-sym]
   (or (find-ns ns-sym)
