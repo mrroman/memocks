@@ -1,5 +1,6 @@
 (ns com.siili.memocks-test
   (:require
+   [clojure.spec.alpha :as s]
    [clojure.test :refer [deftest is testing]]
    [com.siili.memocks :as memocks]
    [com.siili.memocks-test :as test-alias]
@@ -60,6 +61,18 @@
 (defn test-func2 [x]
   (inc x))
 
+(s/fdef test-func3
+  :args (s/cat :x int?)
+  :ret int?)
+(defn test-func3 [x]
+  (inc x))
+
+(s/fdef test-func4
+  :args (s/cat :x int?))
+(defn test-func4 [x]
+  (inc x))
+
+#_{:clj-kondo/ignore [:type-mismatch]}
 (deftest with-mocks-test
   (testing "mocking symbols"
     (memocks/with-mocks [test-func :mock]
@@ -79,4 +92,19 @@
         (is (thrown? Exception (test-alias/test-func2 nil)))))
     (memocks/with-mocks [test-func2 nil]
       (testing "invalid output"
-        (is (thrown? Exception (test-func2 1)))))))
+        (is (thrown? Exception (test-func2 1))))))
+  (testing "use clojure spec schema for mocked function"
+    (memocks/with-mocks [test-func3 1]
+      (is (= 1 (test-func3 1)))
+      (testing "invalid input"
+        (is (thrown? Exception (test-func3 nil)))))
+    (memocks/with-mocks [test-alias/test-func3 1]
+      (is (= 1 (test-alias/test-func3 1)))
+      (testing "invalid input"
+        (is (thrown? Exception (test-alias/test-func3 nil)))))
+    (memocks/with-mocks [test-func3 nil]
+      (testing "invalid output"
+        (is (thrown? Exception (test-func3 1)))))
+    (memocks/with-mocks [test-func4 nil]
+      (testing "missing ret spec"
+        (is (= nil (test-func4 2)))))))

@@ -2,6 +2,11 @@
 
 It's simple mocking library. You can create a mock function that records all calls and check if it was invoked.
 
+- Mocking return value
+- [Recording calls](#recording-calls)
+- [Checking calls in tests](#checking-calls) with clojure.test assert expressions
+- Instrumenting mocks with [malli schema](#malli-support) or [clojure.spec](#clojurespec-support)
+
 [![Clojars Project](https://img.shields.io/clojars/v/org.clojars.mrroman/memocks.svg?include_prereleases)](https://clojars.org/org.clojars.mrroman/memocks)
 
 ## Install
@@ -48,6 +53,8 @@ You can call it as any other function and check all recorded calls.
 (memocks/all-args m)
 => [(:debug "Start process...") (:info "Results:") (:debug "Stop process...")]
 ```
+
+### Checking calls 
 
 Checking if the call happened can be cumbersome, so I've implemented a couple of predicates:
 
@@ -155,6 +162,37 @@ If you use `with-mocks` macro, it will our of the box.
 
 > If you use :malli/schema metadata to define schema, you have to use dev/start!
 > to enable mock instrumentation.
+
+### clojure.spec support
+
+Memocks supports clojure.spec function specs. You can create a mock function 
+which will check if arguments and return value conforms with spec. E.g.
+
+```clj
+(require '[clojure.spec.alpha :as s])
+
+(s/fdef my-inc
+  :args (s/cat :x int?)
+  :ret int?)
+(defn my-inc [x]
+  (inc x))
+
+;; You have to provide a symbol of function 
+;; or with or without namespace (aliases are supported).
+(def my-inc-mock (mock-fn 'my-inc 1))
+
+(my-inc-mock 0)
+;=> 1
+
+(my-inc-mock "aa")
+;=> An exception invalid arguments
+
+(def my-inc-mock2 (mock-fn 'my-inc nil))
+(my-inc-mock2 1)
+;=> An exception invalid return value
+```
+
+If you use `with-mocks` macro, it will our of the box.
 
 ## License
 
