@@ -61,7 +61,23 @@
       (m 2)
       (m 3)
       (is (= (m 4) 5))
-      (is (= [nil '(1) '(2) '(3) '(4)] (memocks/all-args m))))))
+      (is (= [nil '(1) '(2) '(3) '(4)] (memocks/all-args m)))))
+  (testing "mock returning values"
+    (let [m (memocks/mock (memocks/return-values 1 2 3))]
+      (is (= (m) 1))
+      (is (= (m) 2))
+      (is (= (m) 3))
+      (is (thrown? IndexOutOfBoundsException (m)))))
+  (testing "mock returning values for matching call"
+    (testing "with default value"
+      (let [m (memocks/mock (memocks/return-matching [:a :b] 1 [:c] 2 ::memocks/default 3))]
+        (is (= (m :a :b) 1))
+        (is (= (m :c) 2))
+        (is (= (m :d) 3))))
+    (testing "without default value"
+      (let [m (memocks/mock (memocks/return-matching [:a :b] 1))]
+        (is (= (m :a :b) 1))
+        (is (thrown? clojure.lang.ExceptionInfo (m :d)))))))
 
 (defn test-func []
   :original)

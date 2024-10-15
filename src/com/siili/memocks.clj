@@ -26,6 +26,28 @@
   [m]
   (last (all-args m)))
 
+(defn return-values
+  "Returns a function generating returning values in a following calls."
+  [& values]
+  (comp (vec values) dec count))
+
+(defn return-matching
+  "Returns a function generating returning values matching calls"
+  [& call-value-pairs]
+  (let [call->value (into {}
+                          (partition-all 2)
+                          call-value-pairs)]
+    (fn [args]
+      (cond
+        (contains? call->value (last args))
+        (get call->value (last args))
+
+        (contains? call->value ::default)
+        (get call->value ::default)
+
+        :else
+        (throw (ex-info "No matching call" {:call (last args)}))))))
+
 (defn not-invoked?
   "Checks if mock was never invoked."
   [m]
