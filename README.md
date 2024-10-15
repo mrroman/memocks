@@ -123,6 +123,45 @@ The function takes as an argument a list with all recorded calls.
 
 In this example, mock will return the last call (a list of arguments).
 
+#### The result computing function generators
+
+Memocks provides some result providing function generators.
+
+1. `(memocks/return-values val1 ...)` generates a function returning values in following calls.
+
+```clj
+(def m (memocks/mock (memocks/return-values 1 2 3)))
+
+(m)
+=> 1
+
+(m)
+=> 2
+
+(m)
+=> 3
+```
+
+If there are no more values it throws an exception.
+
+2. `(memocks/return-matching call1 val1 call2 val2 ...)` generator a function returning values 
+for matching calls. You can provide a default value for non-matching call with `:com.silli.memocks/default`.
+
+```clj
+(def m (memocks/mock (memocks/return-matching [:a :b] 1 [:c] 2 ::memocks/default 3)))
+
+(m :a :b)
+=> 1
+
+(m :c)
+=> 2
+
+(m :d)
+=> 3
+```
+
+If there's no matching call, it throws an exception.
+
 ### Mocking symbols
 
 Memocks provides a convenient macro that allows you to mock functions easily.
