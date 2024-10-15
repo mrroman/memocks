@@ -30,6 +30,15 @@
       (m1 1)
       (is (memocks/invoked? m1))
       (is (not (memocks/invoked? m2)))))
+  (testing "mock was invoked n times"
+    (let [m1 (memocks/mock)
+          m2 (memocks/mock)]
+      (m1 1)
+      (m1 2)
+      (m1 3)
+      (is (not (memocks/invoked? m1 2)))
+      (is (memocks/invoked? m1 3))
+      (is (not (memocks/invoked? m2)))))
   (testing "mock was invoked with given args"
     (let [m (memocks/mock)]
       (m 3 4 5)

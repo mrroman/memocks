@@ -66,6 +66,12 @@ Checking if the call happened can be cumbersome, so I've implemented a couple of
 (memocks/invoked? m)
 => true
 
+(memocks/invoked? m 3)
+=> true
+
+(memocks/invoked? m 2)
+=> false
+
 (memocks/invoked-with? m :info "Results:")
 => true
 

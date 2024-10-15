@@ -32,9 +32,9 @@
   (empty? (all-args m)))
 
 (defn invoked?
-  "Checks if mock was ever invoked."
-  [m]
-  (not (not-invoked? m)))
+  "Checks if mock was invoked at least once, or N times."
+  ([m] (not (not-invoked? m)))
+  ([m n] (= n (count (all-args m)))))
 
 (defn invoked-with?
   "Checks if mock was invoked with given args"
