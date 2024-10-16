@@ -109,6 +109,7 @@
   (testing "use malli schema for mocked function"
     (memocks/with-mocks [test-func2 1]
       (is (= 1 (test-func2 1)))
+      (is (memocks/invoked? test-func2))
       (testing "invalid input"
         (is (thrown? Exception (test-func2 nil)))))
     (memocks/with-mocks [test-alias/test-func2 1]
@@ -121,6 +122,7 @@
   (testing "use clojure spec schema for mocked function"
     (memocks/with-mocks [test-func3 1]
       (is (= 1 (test-func3 1)))
+      (is (memocks/invoked? test-func3))
       (testing "invalid input"
         (is (thrown? Exception (test-func3 nil)))))
     (memocks/with-mocks [test-alias/test-func3 1]
