@@ -75,22 +75,25 @@
           -instrument (find-var 'malli.core/-instrument)]
       (if-let [schema (get-in (function-schemas) [(symbol (namespace sym))
                                                   (symbol (name sym))])]
-        (-instrument schema f)
+        (with-meta (-instrument schema f)
+          (meta f))
         f))
     (catch java.io.FileNotFoundException _
       f)))
 
 (defn- clojure-spec-instrument [sym f]
   (if-let [s (s/get-spec sym)]
-    (fn [& args]
-      (when (= ::s/invalid (s/conform (:args s) args))
-        (throw (ex-info (str "Function " sym " arguments don't conform spec")
-                        {:explain (s/explain-str (:args s) args)})))
-      (let [res (apply f args)]
-        (when (= ::s/invalid (s/conform (:ret s) res))
-          (throw (ex-info  (str "Function " sym " returned value not conforming ret spec")
-                           {:explain (s/explain-str (:ret s) res)})))
-        res))
+    (with-meta (fn [& args]
+                 (when (= ::s/invalid (s/conform (:args s) args))
+                   (throw (ex-info (str "Function " sym " arguments don't conform spec")
+                                   {:explain (s/explain-str (:args s) args)})))
+                 (let [res (apply f args)]
+                   (when (= ::s/invalid (s/conform (:ret s) res))
+                     (throw (ex-info  (str "Function " sym " returned value not conforming ret spec")
+                                      {:explain (s/explain-str (:ret s) res)})))
+                   res))
+
+      (meta f))
     f))
 
 (defn fn-mock
