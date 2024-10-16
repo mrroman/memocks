@@ -14,14 +14,14 @@ It's simple mocking library. You can create a mock function that records all cal
 You can use git or maven as a dependency source:
 
 ```
-{org.clojars.mrroman/memocks {:mvn/version "0.1.2"}}
+{org.clojars.mrroman/memocks {:mvn/version "0.2.0"}}
 ```
 
 or
 
 ```
 {org.clojars.mrroman/memocks 
-    {:git/url "https://github.com/mrroman/memocks.git" :git/tag "0.1.2" :git/sha "3859de3ea99bd5795cadeba8f4fba3c5252632b2"}}
+    {:git/url "https://github.com/mrroman/memocks.git" :git/tag "0.2.0" :git/sha "75506b1d3763aee0f8d5db4054fbfa93bb3dea70"}}
 ```
 
 ## Usage
